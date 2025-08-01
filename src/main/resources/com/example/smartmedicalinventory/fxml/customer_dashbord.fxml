@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="920.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smartmedicalinventory.controller.Customer_dashbordcontroller">
+   <children>
+      <!-- Sidebar Navigation -->
+      <VBox layoutX="0.0" layoutY="0.0" prefHeight="920.0" prefWidth="250.0" style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 0 15 15 0; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 2, 0);" spacing="10.0">
+         <children>
+            <!-- Dashboard Header -->
+            <VBox alignment="CENTER" prefHeight="100.0" style="-fx-background-color: #4CAF50; -fx-background-radius: 0 15 0 0;">
+               <children>
+                  <Label text="Smart Medical" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <Label text="Customer Dashboard" textFill="WHITE">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </VBox>
+
+            <!-- Navigation Buttons -->
+            <VBox spacing="5.0">
+               <children>
+                  <Button fx:id="viewMedicineBtn" onAction="#viewMedicine" prefWidth="230.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="🏥 View Medicine">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="searchMedicineBtn" onAction="#searchMedicine" prefWidth="230.0" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="🔍 Search Medicine">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="medicalShopBtn" onAction="#medicalShop" prefWidth="230.0" style="-fx-background-color: #9C27B0; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="🛒 Medical Shop">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="orderMedicineBtn" onAction="#orderMedicine" prefWidth="230.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="📦 Order Medicine">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </VBox>
+
+            <!-- Spacer -->
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- Logout Button -->
+            <Button fx:id="logoutBtn" onAction="#logout" prefWidth="230.0" style="-fx-background-color: #F44336; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="🚪 Logout">
+               <VBox.margin>
+                  <Insets bottom="20.0" left="10.0" right="10.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+
+      <!-- Main Content Area -->
+      <VBox layoutX="250.0" layoutY="0.0" prefHeight="920.0" prefWidth="950.0" spacing="20.0">
+         <children>
+            <!-- Header Bar -->
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" style="-fx-background-color: rgba(255, 255, 255, 0.9); -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);" spacing="20.0">
+               <children>
+                  <Label text="Welcome to Smart Medical Inventory" textFill="#333">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="quickSearchField" promptText="Quick Search..." style="-fx-background-radius: 20; -fx-padding: 8;" />
+                  <Button onAction="#quickSearch" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-background-radius: 20;" text="Search" />
+               </children>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </HBox>
+
+            <!-- Dashboard Cards -->
+            <HBox spacing="20.0">
+               <children>
+                  <!-- Medicine Count Card -->
+                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: rgba(76, 175, 80, 0.9); -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4);">
+                     <children>
+                        <Label text="💊" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="medicineCountLabel" text="1,234" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label text="Available Medicines" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+
+                  <!-- Orders Card -->
+                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: rgba(33, 150, 243, 0.9); -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4);">
+                     <children>
+                        <Label text="📋" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="ordersCountLabel" text="56" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label text="My Orders" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+
+                  <!-- Cart Card -->
+                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: rgba(255, 152, 0, 0.9); -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4);">
+                     <children>
+                        <Label text="🛒" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="cartCountLabel" text="8" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="28.0" />
+                           </font>
+                        </Label>
+                        <Label text="Items in Cart" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+
+                  <!-- Profile Card -->
+                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: rgba(156, 39, 176, 0.9); -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 8, 0, 0, 4);">
+                     <children>
+                        <Label text="👤" textFill="WHITE">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="userNameLabel" text="John Doe" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label text="My Profile" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Main Content ScrollPane -->
+            <ScrollPane fx:id="mainContentPane" fitToWidth="true" prefHeight="500.0" style="-fx-background: transparent; -fx-background-color: rgba(255, 255, 255, 0.9); -fx-background-radius: 15;">
+               <content>
+                  <VBox fx:id="contentArea" alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: transparent;">
+                     <children>
+                        <Label text="Welcome to Smart Medical Inventory System" textFill="#333">
+                           <font>
+                              <Font name="System Bold" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label text="Select an option from the sidebar to get started." textFill="#666">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

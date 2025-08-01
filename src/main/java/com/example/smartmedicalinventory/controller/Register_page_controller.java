@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
-public class register_page_controller {
+public class Register_page_controller {
     @FXML
     private RadioButton customerRadio;
     @FXML

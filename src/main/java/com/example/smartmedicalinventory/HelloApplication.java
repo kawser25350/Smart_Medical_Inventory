@@ -18,6 +18,8 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+        // database connection code can be added here if needed
+
         launch();
     }
 }
