@@ -43,7 +43,7 @@ public class HelloController {
         // for test only redirect to dashboard
         // DEPEND on user type if cutomer redirect to customer dashboard if organizzation redirect to admin dashbord
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/admin_dashbord.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/customer_dashbord.fxml"));
             Parent root = fxmlLoader.load();
             Scene scene = new Scene(root);
             Stage stage = (Stage) loginbtn.getScene().getWindow();

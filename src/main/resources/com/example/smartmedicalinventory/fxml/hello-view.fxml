@@ -12,20 +12,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="920.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #667eea 0%, #764ba2 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smartmedicalinventory.controller.HelloController">
+<AnchorPane prefHeight="920.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #3a506b 0%, #5bc0be 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smartmedicalinventory.controller.HelloController">
   <fx:define>
     <ToggleGroup fx:id="userTypeGroup" />
   </fx:define>
   <children>
-    <VBox alignment="CENTER" prefHeight="441.0" prefWidth="645.0" spacing="30.0" style="-fx-background-color: rgba(255, 255, 255, 0.95); -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0.5, 0, 8); -fx-padding: 40;" AnchorPane.bottomAnchor="239.5" AnchorPane.leftAnchor="277.5" AnchorPane.rightAnchor="277.5" AnchorPane.topAnchor="239.5">
+    <VBox alignment="CENTER" prefHeight="441.0" prefWidth="645.0" spacing="30.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 20, 0.5, 0, 8); -fx-padding: 40;" AnchorPane.bottomAnchor="239.5" AnchorPane.leftAnchor="277.5" AnchorPane.rightAnchor="277.5" AnchorPane.topAnchor="239.5">
       <children>
-        <Text fill="#667eea" style="-fx-font-weight: bold;" text="Smart Medical Inventory" wrappingWidth="532.2969970703125">
+        <Text fill="#3a506b" style="-fx-font-weight: bold;" text="Smart Medical Inventory" wrappingWidth="532.2969970703125">
           <font>
             <Font size="43.0" />
           </font>
         </Text>
         <HBox alignment="CENTER" prefHeight="22.0" prefWidth="502.0" spacing="20.0">
-          <RadioButton fx:id="customer" style="-fx-text-fill: #4CAF50;" text="Customer">
+          <RadioButton fx:id="customer" style="-fx-text-fill: #5bc0be;" text="Customer">
             <font>
               <Font size="16.0" />
             </font>
@@ -33,26 +33,25 @@
                      <ToggleGroup fx:id="userTypeGroup" />
                   </toggleGroup>
           </RadioButton>
-          <RadioButton fx:id="organization" style="-fx-text-fill: #4CAF50;" text="Organization" toggleGroup="$userTypeGroup">
+          <RadioButton fx:id="organization" style="-fx-text-fill: #5bc0be;" text="Organization" toggleGroup="$userTypeGroup">
             <font>
               <Font size="16.0" />
             </font>
           </RadioButton>
         </HBox>
-        <TextField fx:id="userid" alignment="CENTER" maxHeight="36.0" maxWidth="250.0" minHeight="36.0" minWidth="250.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="36.0" prefWidth="472.0" promptText="User" style="-fx-background-radius: 12; -fx-border-color: #667eea; -fx-border-radius: 12; -fx-border-width: 2;">
+        <TextField fx:id="userid" alignment="CENTER" maxHeight="36.0" maxWidth="250.0" minHeight="36.0" minWidth="250.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="36.0" prefWidth="250.0" promptText="User" style="-fx-background-radius: 12; -fx-border-color: #3a506b; -fx-border-radius: 12; -fx-border-width: 2;">
           <font>
             <Font size="15.0" />
           </font>
         </TextField>
-        <PasswordField fx:id="userpswd" alignment="CENTER" maxWidth="250.0" minWidth="250.0" prefHeight="36.0" prefWidth="50.0" promptText="Password" style="-fx-background-radius: 12; -fx-border-color: #667eea; -fx-border-radius: 12; -fx-border-width: 2;" />
+        <PasswordField fx:id="userpswd" alignment="CENTER" maxWidth="250.0" minWidth="250.0" prefHeight="36.0" prefWidth="250.0" promptText="Password" style="-fx-background-radius: 12; -fx-border-color: #3a506b; -fx-border-radius: 12; -fx-border-width: 2;" />
         <HBox alignment="CENTER" spacing="20.0">
-            <!-- Changed onKeyPressed to onAction for proper event handling -->
-            <Button fx:id="loginbtn" mnemonicParsing="false" onAction="#loginmethod" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);" text="Login">
+            <Button fx:id="loginbtn" mnemonicParsing="false" onAction="#loginmethod" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);" text="Login">
               <font>
                 <Font size="17.0" />
               </font>
             </Button>
-            <Button fx:id="registerbtn" mnemonicParsing="false" onAction="#registermethod" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: rgba(76, 175, 80, 0.9); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);" text="Register">
+            <Button fx:id="registerbtn" mnemonicParsing="false" onAction="#registermethod" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: #5bc0be; -fx-background-radius: 20; -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);" text="Register">
               <font>
                 <Font size="17.0" />
               </font>
@@ -62,10 +61,9 @@
     </VBox>
     <Button fx:id="backIcon" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#backmethod" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 20; -fx-background-color: rgba(255, 255, 255, 0.9); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);">
       <graphic>
-        <Text style="-fx-font-size: 24px; -fx-fill: #667eea;" text="←" />
+        <Text style="-fx-font-size: 24px; -fx-fill: #3a506b;" text="←" />
       </graphic>
     </Button>
-    <!-- Decorative Arc for accent -->
     <Arc fill="rgba(255, 255, 255, 0.2)" layoutX="900.0" layoutY="150.0" length="180.0" radiusX="50.0" radiusY="50.0" startAngle="45.0" strokeType="INSIDE" type="ROUND" />
     <Arc fill="rgba(255, 255, 255, 0.1)" layoutX="150.0" layoutY="700.0" length="90.0" radiusX="30.0" radiusY="30.0" startAngle="0.0" strokeType="INSIDE" type="ROUND" />
   </children>

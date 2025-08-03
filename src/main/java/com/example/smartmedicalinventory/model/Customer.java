@@ -6,18 +6,18 @@ public class Customer extends User {
     }
 
     public void viewMedicine() {
-        // Logic to view medicine
+
     }
     public void medicalShop() {
-        // Logic to shop for medicine
+
     }
 
     public void orderMedicine() {
-        // Logic to order medicine
+
     }
 
     public void searchMedicine() {
-        // Logic to search for medicine
+
     }
 
 }
