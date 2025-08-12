@@ -63,10 +63,7 @@
                   <Text style="-fx-font-size: 16px; -fx-fill: #333; -fx-font-weight: bold;" text="Contact:" />
                   <TextField fx:id="contactField" prefHeight="36.0" prefWidth="220" promptText="Contact" style="-fx-background-radius: 12; -fx-border-color: #3a506b; -fx-border-radius: 12; -fx-border-width: 2;" />
                </VBox>
-               <VBox spacing="10.0">
-                  <Text style="-fx-font-size: 16px; -fx-fill: #333; -fx-font-weight: bold;" text="User ID:" />
-                  <TextField fx:id="useridField" prefHeight="36.0" prefWidth="220" promptText="User ID" style="-fx-background-radius: 12; -fx-border-color: #3a506b; -fx-border-radius: 12; -fx-border-width: 2;" />
-               </VBox>
+               <VBox spacing="10.0" />
                <VBox spacing="10.0">
                   <Text style="-fx-font-size: 16px; -fx-fill: #333; -fx-font-weight: bold;" text="Password:" />
                   <TextField fx:id="passwordField" prefHeight="36.0" prefWidth="220" promptText="Password" style="-fx-background-radius: 12; -fx-border-color: #3a506b; -fx-border-radius: 12; -fx-border-width: 2;" />
@@ -107,7 +104,7 @@
                </VBox>
             </HBox>
             <HBox alignment="CENTER" spacing="20.0">
-               <Button layoutX="0.0" layoutY="0.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); -fx-background-radius: 25; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 4);" text="Register" textFill="WHITE">
+               <Button layoutX="0.0" layoutY="0.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" style="-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); -fx-background-radius: 25; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 4);" text="Register" textFill="WHITE" onAction="#registermethod">
                   <font>
                      <Font size="19.0" />
                   </font>

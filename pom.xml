@@ -38,6 +38,18 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <repositories>
+            <repository>
+                <id>central</id>
+                <url>https://repo.maven.apache.org/maven2</url>
+            </repository>
+        </repositories>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

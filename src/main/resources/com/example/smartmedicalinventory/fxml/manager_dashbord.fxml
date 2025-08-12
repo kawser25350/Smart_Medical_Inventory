@@ -43,7 +43,7 @@
                         <Insets left="10.0" right="10.0" />
                      </VBox.margin>
                   </Button>
-                  <Button onAction="#showExpiredMedicine" prefWidth="230.0" style="-fx-background-color: #5bc0be; -fx-text-fill: #1c2541; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Expired Medicine">
+                  <Button onAction="#showExpiredMedicine" prefHeight="0.0" prefWidth="230.0" style="-fx-background-color: #5bc0be; -fx-text-fill: #1c2541; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Expired Medicine">
                      <VBox.margin>
                         <Insets left="10.0" right="10.0" />
                      </VBox.margin>
