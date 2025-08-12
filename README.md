@@ -24,7 +24,7 @@ Customers can purchase medicines from multiple stores, while managers and admins
 *(Manager accounts can only be created by an admin of the organization to maintain security and integrity of the organization)*  
 - Add and delete medicines
 - View expiry dates and receive expiry alerts
-- Get AI-based **medicine demand predictions**
+- Get statistical **medicine demand predictions** based on the past 6 months of sales data to know exactly how many units to purchase  
 - Sell medicines directly
 - Manage departments/categories and allocate budgets
 - View average sales and stock suggestions
