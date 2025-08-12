@@ -14,7 +14,14 @@ Customers can purchase medicines from multiple stores, while managers and admins
 - View various medical inventories and product details
 - Order medicines from multiple registered sellers
 
-### **For Managers**
+### **For Admins**
+- Create and manage multiple manager accounts
+- Add or remove managers
+- Modify and update the **prediction algorithm**
+- Adjust system settings for better performance
+
+### **For Managers**  
+*(Manager accounts can only be created by an admin of the organization to maintain security and integrity of the organization)*  
 - Add and delete medicines
 - View expiry dates and receive expiry alerts
 - Get AI-based **medicine demand predictions**
@@ -22,18 +29,12 @@ Customers can purchase medicines from multiple stores, while managers and admins
 - Manage departments/categories and allocate budgets
 - View average sales and stock suggestions
 
-### **For Admins**
-- Create and manage multiple manager accounts
-- Add or remove managers
-- Modify and update the **prediction algorithm**
-- Adjust system settings for better performance
-
 ---
 
 ## 🧠 Intelligent & Automated Features
 - **Auto Stocking** — Large inventories automatically store medicines with location mapping
 - **Smart Alerts** — Notifications for expiry and low stock based on sales patterns
-- **Statistical Predictions** — Helps managers avoid overstocking or running out of medicines
+- **Statistical Predictions** — Uses **past 6 months of sales data** for each medicine to predict how many units to purchase in the next cycle, helping avoid overstocking or shortages
 
 ---
 
@@ -82,5 +83,3 @@ Customers can purchase medicines from multiple stores, while managers and admins
 
 ---
 
-## 🏷 Suggested Tags
-`javafx` `inventory-management` `medical-software` `ecommerce` `pharmacy-management` `java` `healthcare` `medicine`
