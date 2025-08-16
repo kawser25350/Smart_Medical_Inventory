@@ -10,216 +10,348 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="920.0" prefWidth="1200.0" style="-fx-background-color: linear-gradient(to bottom, #3a506b 0%, #5bc0be 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smartmedicalinventory.controller.Admin_dashbordcontroller">
+<AnchorPane prefHeight="950.0" prefWidth="1400.0" style="-fx-background-color: linear-gradient(to bottom, #3a506b 0%, #5bc0be 100%);" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.smartmedicalinventory.controller.Admin_dashbordcontroller">
    <children>
       <!-- Sidebar Navigation -->
-      <VBox layoutX="0.0" layoutY="0.0" prefHeight="920.0" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 0 15 15 0; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 2, 0);">
+      <VBox layoutX="0.0" layoutY="0.0" prefHeight="950.0" prefWidth="300.0" spacing="0.0" style="-fx-background-color: #ffffffee; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 25, 0, 8, 0);">
          <children>
-            <!-- Dashboard Header -->
-            <VBox alignment="CENTER" prefHeight="100.0" style="-fx-background-color: #1c2541; -fx-background-radius: 0 15 0 0;">
+            <!-- Enhanced Profile Section -->
+            <VBox alignment="CENTER" prefHeight="280.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(135deg, #2a3d55 0%, #4aa3b5 100%); -fx-background-radius: 0 0 20 20;">
                <children>
-                  <Label text="Smart Medical" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="18.0" />
-                     </font>
-                  </Label>
-                  <Label text="Admin Dashboard" textFill="#b5c7d3">
-                     <font>
-                        <Font size="12.0" />
-                     </font>
-                  </Label>
+                  <!-- Profile Picture with Icon -->
+                  <VBox alignment="CENTER" prefHeight="122.0" prefWidth="300.0" style="-fx-background-color: #ffffff; -fx-background-radius: 60; -fx-border-color: rgba(255,255,255,0.8); -fx-border-radius: 60; -fx-border-width: 3; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 3);">
+                     <children>
+                        <Text fill="#2a3d55" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-text-alignment: center;">
+                           <font>
+                              <Font size="50.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+
+                  <!-- Profile Actions -->
+                  <HBox alignment="CENTER" prefHeight="47.0" prefWidth="300.0" spacing="15.0">
+                     <children>
+                        <Button onAction="#editProfile" prefHeight="45.0" prefWidth="90.0" style="-fx-background-color: rgba(255,255,255,0.25); -fx-text-fill: #2a3d55; -fx-background-radius: 18; -fx-font-size: 12px; -fx-font-weight: bold; -fx-border-color: rgba(255,255,255,0.6); -fx-border-radius: 18; -fx-border-width: 2;" text="✏️ Edit" />
+                        <Button onAction="#profileSettings" prefHeight="43.0" prefWidth="90.0" style="-fx-background-color: rgba(255,255,255,0.25); -fx-text-fill: #2a3d55; -fx-background-radius: 18; -fx-font-size: 12px; -fx-font-weight: bold; -fx-border-color: rgba(255,255,255,0.6); -fx-border-radius: 18; -fx-border-width: 2;" text="⚙️ Settings" />
+                     </children>
+                  </HBox>
+
+                  <!-- User Info -->
+                  <VBox alignment="CENTER" spacing="8.0">
+                     <children>
+                        <Label fx:id="adminNameLabel" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);" text="Administrator" textFill="#362f2f">
+                           <font>
+                              <Font name="System Bold" size="22.0" />
+                           </font>
+                        </Label>
+                        <Label style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);" text="System Administrator" textFill="#362828">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="adminIdLabel" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);" text="ID: A12345" textFill="#c91e1e">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
                </children>
                <padding>
-                  <Insets bottom="10.0" top="10.0" />
+                  <Insets bottom="25.0" top="30.0" />
                </padding>
             </VBox>
 
             <!-- Navigation Buttons -->
-            <VBox spacing="5.0">
+            <VBox spacing="8.0" style="-fx-padding: 20 0 0 0;">
                <children>
-                  <Button onAction="#manageUsers" prefHeight="38.0" prefWidth="230.0" style="-fx-background-color: #3a506b; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Manage Users">
+                  <!-- Primary Actions -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 11px;" text="USER MANAGEMENT" textFill="#5bc0be">
                      <VBox.margin>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="20.0" top="5.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <Button onAction="#manageUsers" prefHeight="45.0" prefWidth="260.0" style="-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); -fx-text-fill: white; -fx-background-radius: 12; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" text="Show all manager">
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
                      </VBox.margin>
                   </Button>
-                  <Button onAction="#addUser" prefHeight="32.0" prefWidth="230.0" style="-fx-background-color: #5bc0be; -fx-text-fill: #1c2541; -fx-background-radius: 8; -fx-font-size: 13px;" text="Add User" />
-                  <Button onAction="#removeUser" prefHeight="33.0" prefWidth="230.0" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 13px;" text="Remove User" />
-                  <Button onAction="#updateUser" prefHeight="32.0" prefWidth="230.0" style="-fx-background-color: #1c2541; -fx-text-fill: #5bc0be; -fx-background-radius: 8; -fx-font-size: 13px;" text="Update User" />
-                  <Button onAction="#viewAllUsers" prefHeight="33.0" prefWidth="230.0" style="-fx-background-color: #3a506b; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 13px;" text="View All Users" />
-                  <Button onAction="#viewBuyHistory" prefHeight="32.0" prefWidth="231.0" style="-fx-background-color: #5bc0be; -fx-text-fill: #1c2541; -fx-background-radius: 8; -fx-font-size: 13px;" text="Buy History" />
-                  <Button contentDisplay="CENTER" onAction="#settings" prefHeight="26.0" prefWidth="218.0" style="-fx-background-color: #b5c7d3; -fx-text-fill: #1c2541; -fx-background-radius: 8; -fx-font-size: 13px;" text="Settings" />
-                  <Button onAction="#viewSalesReport" prefWidth="230.0" style="-fx-background-color: #1c2541; -fx-text-fill: #5bc0be; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Sales Report">
+
+                  <Button onAction="#addUser" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="➕  Add Manager">
                      <VBox.margin>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets left="20.0" right="20.0" />
                      </VBox.margin>
                   </Button>
-                  <Button onAction="#medicineOversight" prefWidth="230.0" style="-fx-background-color: #3a506b; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Medicine Oversight">
+
+                  <!-- Reports Section -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 11px;" text="REPORTS &amp; ANALYTICS" textFill="#5bc0be">
                      <VBox.margin>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets bottom="10.0" left="20.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <Button onAction="#viewBuyHistory" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="📊  Purchase History">
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
                      </VBox.margin>
                   </Button>
-                  <Button onAction="#systemLogs" prefWidth="230.0" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="System Logs">
+
+                  <Button onAction="#viewSalesReport" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="📈  Sales Reports">
                      <VBox.margin>
-                        <Insets left="10.0" right="10.0" />
+                        <Insets left="20.0" right="20.0" />
+                     </VBox.margin>
+                  </Button>
+
+                  <Button onAction="#medicineOversight" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="💊  Medicine Inventory">
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </VBox.margin>
+                  </Button>
+
+                  <!-- System Section -->
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 11px;" text="SYSTEM" textFill="#5bc0be">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="20.0" top="20.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <Button onAction="#systemLogs" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="📋  Get Predictions">
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
+                     </VBox.margin>
+                  </Button>
+
+                  <Button onAction="#settings" prefHeight="40.0" prefWidth="260.0" style="-fx-background-color: #ffffffee; -fx-text-fill: #3a506b; -fx-background-radius: 12; -fx-font-size: 13px; -fx-border-color: #5bc0be; -fx-border-radius: 12; -fx-border-width: 2; -fx-cursor: hand;" text="⚙️  Settings">
+                     <VBox.margin>
+                        <Insets left="20.0" right="20.0" />
                      </VBox.margin>
                   </Button>
                </children>
-               <padding>
-                  <Insets top="20.0" />
-               </padding>
             </VBox>
 
             <!-- Spacer -->
             <Region VBox.vgrow="ALWAYS" />
 
             <!-- Logout Button -->
-            <Button onAction="#logout" prefWidth="230.0" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold;" text="Logout">
+            <Button onAction="#logout" prefHeight="45.0" prefWidth="260.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 12; -fx-font-size: 14px; -fx-font-weight: bold; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" text="🚪  Sign Out">
                <VBox.margin>
-                  <Insets bottom="20.0" left="10.0" right="10.0" />
+                  <Insets bottom="30.0" left="20.0" right="20.0" />
                </VBox.margin>
             </Button>
          </children>
       </VBox>
 
       <!-- Main Content Area -->
-      <VBox layoutX="250.0" layoutY="0.0" prefHeight="920.0" prefWidth="950.0" spacing="20.0">
+      <VBox layoutX="300.0" layoutY="0.0" prefHeight="950.0" prefWidth="1100.0" spacing="30.0">
          <children>
             <!-- Header Bar -->
-            <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="20.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);">
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="20.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);">
                <children>
-                  <Label text="Admin Management System" textFill="#1c2541">
-                     <font>
-                        <Font name="System Bold" size="24.0" />
-                     </font>
-                  </Label>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="quickSearchField" promptText="Quick Search..." style="-fx-background-radius: 20; -fx-padding: 8;" />
-                  <Button onAction="#quickSearch" style="-fx-background-color: #5bc0be; -fx-text-fill: #1c2541; -fx-background-radius: 20;" text="Search" />
-               </children>
-               <padding>
-                  <Insets left="20.0" right="20.0" />
-               </padding>
-            </HBox>
-
-            <!-- Dashboard Cards -->
-            <HBox spacing="20.0">
-               <children>
-                  <!-- Total Users Card -->
-                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #3a506b; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 8, 0, 0, 4);">
+                  <VBox>
                      <children>
-                        <Label text="👥" textFill="WHITE">
+                        <Label text="Dashboard Overview" textFill="#3a506b">
                            <font>
-                              <Font size="36.0" />
+                              <Font name="System Bold" size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="totalUsersLabel" text="1,234" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="28.0" />
-                           </font>
-                        </Label>
-                        <Label text="Total Users" textFill="WHITE">
+                        <Label text="Manage your medical inventory system" textFill="#5bc0be">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                      </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <TextField fx:id="quickSearchField" prefHeight="40.0" prefWidth="280.0" promptText="Search users, medicines..." style="-fx-background-radius: 20; -fx-padding: 12; -fx-border-color: #3a506b; -fx-border-radius: 20; -fx-border-width: 2; -fx-font-size: 14px;" />
+                  <Button onAction="#quickSearch" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); -fx-text-fill: white; -fx-background-radius: 20; -fx-font-weight: bold; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);" text="Search" />
+               </children>
+               <padding>
+                  <Insets left="30.0" right="30.0" />
+               </padding>
+            </HBox>
+
+            <!-- Dashboard Stats Cards -->
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <!-- Total Users Card -->
+                  <VBox alignment="CENTER" prefHeight="140.0" prefWidth="250.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: linear-gradient(135deg, #3a506b, #5bc0be); -fx-background-radius: 25;">
+                                 <children>
+                                    <Label text="👥" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="totalUsersLabel" text="1,234" textFill="#3a506b">
+                                       <font>
+                                          <Font name="System Bold" size="28.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="total manager" textFill="#5bc0be">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
                      <padding>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </VBox>
 
                   <!-- Sales Card -->
-                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #5bc0be; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 8, 0, 0, 4);">
+                  <VBox alignment="CENTER" prefHeight="140.0" prefWidth="250.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);">
                      <children>
-                        <Label text="📈" textFill="#1c2541">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="salesLabel" text="₹ 45,000" textFill="#1c2541">
-                           <font>
-                              <Font name="System Bold" size="28.0" />
-                           </font>
-                        </Label>
-                        <Label text="Total Sales" textFill="#1c2541">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: linear-gradient(135deg, #5bc0be, #3a506b); -fx-background-radius: 25;">
+                                 <children>
+                                    <Label text="💰" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="salesLabel" text="₹45,000" textFill="#3a506b">
+                                       <font>
+                                          <Font name="System Bold" size="28.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Total Sales" textFill="#5bc0be">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </VBox>
 
                   <!-- Medicines Card -->
-                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b5c7d3; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 8, 0, 0, 4);">
+                  <VBox alignment="CENTER" prefHeight="140.0" prefWidth="250.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);">
                      <children>
-                        <Label text="💊" textFill="#1c2541">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="totalMedicinesLabel" text="2,456" textFill="#1c2541">
-                           <font>
-                              <Font name="System Bold" size="28.0" />
-                           </font>
-                        </Label>
-                        <Label text="Total Medicines" textFill="#1c2541">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: linear-gradient(135deg, #3a506b, #5bc0be); -fx-background-radius: 25;">
+                                 <children>
+                                    <Label text="💊" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="totalMedicinesLabel" text="2,456" textFill="#3a506b">
+                                       <font>
+                                          <Font name="System Bold" size="28.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Medicines" textFill="#5bc0be">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </VBox>
 
-                  <!-- Logs Card -->
-                  <VBox alignment="CENTER" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #1c2541; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 8, 0, 0, 4);">
+                  <!-- System Status Card -->
+                  <VBox alignment="CENTER" prefHeight="140.0" prefWidth="250.0" style="-fx-background-color: #ffffffee; -fx-background-radius: 24; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);">
                      <children>
-                        <Label text="📜" textFill="#5bc0be">
-                           <font>
-                              <Font size="36.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="logsLabel" text="1,200" textFill="#5bc0be">
-                           <font>
-                              <Font name="System Bold" size="28.0" />
-                           </font>
-                        </Label>
-                        <Label text="System Logs" textFill="#5bc0be">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                           <children>
+                              <VBox alignment="CENTER" prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: linear-gradient(135deg, #5bc0be, #3a506b); -fx-background-radius: 25;">
+                                 <children>
+                                    <Label text="⚡" textFill="WHITE">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                              <VBox>
+                                 <children>
+                                    <Label fx:id="logsLabel" text="Healthy" textFill="#3a506b">
+                                       <font>
+                                          <Font name="System Bold" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="System Status" textFill="#5bc0be">
+                                       <font>
+                                          <Font size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                      <padding>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
                   </VBox>
                </children>
             </HBox>
 
-            <!-- Main Content ScrollPane -->
-            <ScrollPane fx:id="mainContentPane" fitToWidth="true" prefHeight="500.0" style="-fx-background: transparent; -fx-background-color: #ffffffee; -fx-background-radius: 15;">
+            <!-- Main Content Area -->
+            <ScrollPane fx:id="mainContentPane" fitToWidth="true" prefHeight="550.0" style="-fx-background: transparent; -fx-background-color: #ffffffee; -fx-background-radius: 24;">
                <content>
-                  <VBox fx:id="contentArea" alignment="TOP_CENTER" spacing="20.0" style="-fx-background-color: transparent;">
+                  <VBox fx:id="contentArea" alignment="TOP_CENTER" spacing="25.0" style="-fx-background-color: transparent;">
                      <children>
-                        <!-- Admin Actions Section -->
-                        <HBox alignment="CENTER" spacing="10.0" />
+                        <VBox alignment="CENTER" spacing="15.0">
+                           <children>
+                              <Label text="Welcome to Admin Dashboard" textFill="#3a506b">
+                                 <font>
+                                    <Font name="System Bold" size="28.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Manage users, view comprehensive reports, and oversee all system operations efficiently." textFill="#5bc0be">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="40.0" />
                      </padding>
                   </VBox>
                </content>
             </ScrollPane>
          </children>
          <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
          </padding>
       </VBox>
    </children>

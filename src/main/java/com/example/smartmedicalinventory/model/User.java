@@ -1,25 +1,19 @@
 package com.example.smartmedicalinventory.model;
 
 public class User {
-    private String userId;
-    private String password;
-    private String userType;
+    private int userId;
+    private String name;
 
-    public User(String userId, String password, String userType) {
+    public User(int userId, String name) {
         this.userId = userId;
-        this.password = password;
-        this.userType = userType;
+        this.name = name;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getUserType() {
-        return userType;
+    public String getName() {
+        return name;
     }
 }

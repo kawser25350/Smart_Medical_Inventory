@@ -1,14 +1,29 @@
 package com.example.smartmedicalinventory.controller;
 
-import javafx.event.ActionEvent;
+import com.example.smartmedicalinventory.model.Customer;
+import com.example.smartmedicalinventory.model.Medicine;
+import com.example.smartmedicalinventory.model.MedicalShop;
+import com.example.smartmedicalinventory.util.SystemController;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Insets;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Customer_dashbordcontroller implements Initializable {
@@ -23,80 +38,699 @@ public class Customer_dashbordcontroller implements Initializable {
     private Label cartCountLabel;
 
     @FXML
-    private Label userNameLabel;
+    private Label profileNameLabel;
+
+    @FXML
+    private Label userNameLabel; // Add this label mapping
+
+    @FXML
+    private Label customerIdLabel; // Add this label mapping
+
+    @FXML
+    private VBox contentArea; // Ensure this matches the FXML file's fx:id
 
     @FXML
     private TextField quickSearchField;
 
-    @FXML
-    private ScrollPane mainContentPane;
+    private Customer customerObj;
 
-    @FXML
-    private VBox contentArea;
+    public void setCustomer(Customer customer) {
+        this.customerObj = customer;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Initialize dashboard data
-        updateDashboardStats();
+        // Set user information in all relevant labels - add null checks
+        if (userNameLabel != null) {
+            userNameLabel.setText(customer.getName());
+        }
+        if (customerIdLabel != null) {
+            customerIdLabel.setText("ID: C" + customer.getUserId());
+        }
+        if (profileNameLabel != null) {
+            profileNameLabel.setText(customer.getName());
+        }
+
+        loadDashboardData();
     }
 
-    @FXML
-    void viewMedicine(ActionEvent event) {
-        // Update content area to show medicine list
-        loadContent("Medicine Catalog", "Here you can view all available medicines...");
-    }
+    private void loadDashboardData() {
+        Connection conn = null;
+        try {
+            conn = SystemController.getConnection();
 
-    @FXML
-    void searchMedicine(ActionEvent event) {
-        // Update content area to show search interface
-        loadContent("Search Medicine", "Enter medicine name or category to search...");
-    }
+            // Fetch total available medicines
+            String medicineQuery = "SELECT COUNT(*) AS total_medicines FROM Medicine";
+            try (PreparedStatement stmt = conn.prepareStatement(medicineQuery);
+                 ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    medicineCountLabel.setText(String.valueOf(rs.getInt("total_medicines")));
+                }
+            }
 
-    @FXML
-    void medicalShop(ActionEvent event) {
-        // Update content area to show shop interface
-        loadContent("Medical Shop", "Browse and shop for medicines...");
-    }
+            // Fetch total orders for the customer
+            String ordersQuery = "SELECT COUNT(*) AS total_orders FROM Customer_buy_history WHERE fk_customer_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(ordersQuery)) {
+                stmt.setInt(1, customerObj.getUserId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        ordersCountLabel.setText(String.valueOf(rs.getInt("total_orders")));
+                    }
+                }
+            }
 
-    @FXML
-    void orderMedicine(ActionEvent event) {
-        // Update content area to show order interface
-        loadContent("Order Medicine", "Place your medicine orders here...");
-    }
+            // Set cart count to 0 for now (can be enhanced later)
+            cartCountLabel.setText("0");
 
-    @FXML
-    void quickSearch(ActionEvent event) {
-        String searchTerm = quickSearchField.getText();
-        if (!searchTerm.isEmpty()) {
-            loadContent("Search Results", "Searching for: " + searchTerm);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Set default values on error
+            medicineCountLabel.setText("0");
+            ordersCountLabel.setText("0");
+            cartCountLabel.setText("0");
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     @FXML
-    void logout(ActionEvent event) {
-        // Handle logout - redirect to login page
-        System.out.println("Logout clicked");
+    private void profileMenu() {
+        loadEditProfileForm(); // Only settings functionality available
     }
 
-    private void updateDashboardStats() {
-        // Update the dashboard statistics
-        medicineCountLabel.setText("1,234");
-        ordersCountLabel.setText("56");
-        cartCountLabel.setText("8");
-        userNameLabel.setText("John Doe");
-    }
-
-    private void loadContent(String title, String description) {
-        // Clear existing content
+    private void loadEditProfileForm() {
         contentArea.getChildren().clear();
 
-        // Add new content
+        // Title
+        Label titleLabel = new Label("Settings");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 30 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        // Edit Profile Form
+        VBox formContainer = new VBox(20);
+        formContainer.setPadding(new Insets(20));
+        formContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 15; " +
+                              "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3); " +
+                              "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
+        formContainer.setPrefWidth(700);
+
+        // Name Field
+        VBox nameSection = new VBox(8);
+        Label nameLabel = new Label("Full Name");
+        nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        TextField nameField = new TextField();
+        nameField.setText(customerObj.getName());
+        nameField.setStyle("-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #3a506b; -fx-border-radius: 8;");
+        nameField.setPrefHeight(40);
+        nameSection.getChildren().addAll(nameLabel, nameField);
+
+        // Email Field (Read-only with note)
+        VBox emailSection = new VBox(8);
+        Label emailLabel = new Label("Email Address");
+        emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        TextField emailField = new TextField();
+        emailField.setText("customer@example.com"); // This should come from database
+        emailField.setEditable(false);
+        emailField.setStyle("-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #95a5a6; -fx-border-radius: 8; -fx-background-color: #ecf0f1;");
+        emailField.setPrefHeight(40);
+
+        Label emailNote = new Label("* Email cannot be changed for security reasons");
+        emailNote.setStyle("-fx-font-size: 12px; -fx-text-fill: #e74c3c; -fx-font-style: italic;");
+
+        emailSection.getChildren().addAll(emailLabel, emailField, emailNote);
+
+        // Contact Field
+        VBox contactSection = new VBox(8);
+        Label contactLabel = new Label("Contact Number");
+        contactLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        TextField contactField = new TextField();
+        contactField.setPromptText("Enter your contact number");
+        contactField.setStyle("-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #3a506b; -fx-border-radius: 8;");
+        contactField.setPrefHeight(40);
+        contactSection.getChildren().addAll(contactLabel, contactField);
+
+        // Password Section
+        VBox passwordSection = new VBox(8);
+        Label passwordLabel = new Label("New Password (Optional)");
+        passwordLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+        TextField passwordField = new TextField();
+        passwordField.setPromptText("Enter new password or leave blank");
+        passwordField.setStyle("-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #3a506b; -fx-border-radius: 8;");
+        passwordField.setPrefHeight(40);
+        passwordSection.getChildren().addAll(passwordLabel, passwordField);
+
+        // Buttons
+        HBox buttonSection = new HBox(15);
+        buttonSection.setStyle("-fx-alignment: center;");
+
+        Button saveButton = new Button("Save Changes");
+        saveButton.setStyle("-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); " +
+                           "-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; " +
+                           "-fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 150; -fx-pref-height: 40; " +
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0, 0, 2);");
+        saveButton.setOnAction(e -> {
+            // TODO: Implement save functionality - no popup
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-background-color: #ffffff; -fx-text-fill: #3a506b; " +
+                             "-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; " +
+                             "-fx-border-color: #3a506b; -fx-border-radius: 8; -fx-border-width: 2; " +
+                             "-fx-cursor: hand; -fx-pref-width: 150; -fx-pref-height: 40;");
+        cancelButton.setOnAction(e -> {
+            updateContentArea("Welcome Back!", "Click on any option from the sidebar to get started.");
+        });
+
+        buttonSection.getChildren().addAll(saveButton, cancelButton);
+
+        formContainer.getChildren().addAll(nameSection, emailSection, contactSection, passwordSection, buttonSection);
+        contentArea.getChildren().add(formContainer);
+    }
+
+
+    @FXML
+    private void viewMedicine() {
+        try {
+            List<Medicine> medicines = customerObj.browseMedicinesWithPrice();
+            if (medicines.isEmpty()) {
+                updateContentArea("Browse Medicines", "No medicines found in the inventory.");
+            } else {
+                loadMedicineBoxes(medicines);
+            }
+        } catch (Exception e) {
+            updateContentArea("Error", "Failed to fetch medicines: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMedicineBoxes(List<Medicine> medicines) {
+        contentArea.getChildren().clear();
+
+        // Title
+        Label titleLabel = new Label("Browse Medicines");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        // Medicine boxes container
+        VBox medicineContainer = new VBox(15);
+        medicineContainer.setPadding(new Insets(20));
+
+        for (Medicine medicine : medicines) {
+            HBox medicineBox = createMedicineBox(medicine);
+            medicineContainer.getChildren().add(medicineBox);
+        }
+
+        contentArea.getChildren().add(medicineContainer);
+    }
+
+    private HBox createMedicineBox(Medicine medicine) {
+        HBox medicineBox = new HBox(20);
+        medicineBox.setStyle("-fx-background-color: #ffffff; -fx-padding: 20; -fx-background-radius: 15; " +
+                           "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3); " +
+                           "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
+        medicineBox.setPrefWidth(800);
+
+        // Medicine Info Section
+        VBox infoSection = new VBox(8);
+        infoSection.setPrefWidth(400);
+
+        Label nameLabel = new Label(medicine.getName());
+        nameLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+
+        Label typeLabel = new Label("Type: " + medicine.getType());
+        typeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
+
+        Label companyLabel = new Label("Company: " + medicine.getCompany());
+        companyLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
+
+        Label priceLabel = new Label("Price: $" + String.format("%.2f", medicine.getPricePerUnit()) + " per unit");
+        priceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;");
+
+        infoSection.getChildren().addAll(nameLabel, typeLabel, companyLabel, priceLabel);
+
+        // Buttons Section
+        VBox buttonSection = new VBox(10);
+        buttonSection.setPrefWidth(200);
+
+        Button orderButton = new Button("Order Now");
+        orderButton.setStyle("-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); " +
+                           "-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; " +
+                           "-fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 180; -fx-pref-height: 35; " +
+                           "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0, 0, 2);");
+        orderButton.setOnAction(e -> handleOrderMedicine(medicine));
+
+        Button addToCartButton = new Button("Add to Cart");
+        addToCartButton.setStyle("-fx-background-color: #ffffff; -fx-text-fill: #3a506b; " +
+                                "-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; " +
+                                "-fx-border-color: #3a506b; -fx-border-radius: 8; -fx-border-width: 2; " +
+                                "-fx-cursor: hand; -fx-pref-width: 180; -fx-pref-height: 35; " +
+                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 2);");
+        addToCartButton.setOnAction(e -> handleAddToCart(medicine));
+
+        buttonSection.getChildren().addAll(orderButton, addToCartButton);
+
+        medicineBox.getChildren().addAll(infoSection, buttonSection);
+        return medicineBox;
+    }
+
+    private void handleOrderMedicine(Medicine medicine) {
+        try {
+            // Insert order into database
+            Connection conn = SystemController.getConnection();
+
+            // First, ensure we have a default organization and department
+            int orgId = getOrCreateDefaultOrganization(conn);
+            int deptId = getOrCreateDefaultDepartment(conn, orgId);
+
+            String insertQuery = "INSERT INTO Customer_buy_history (fk_customer_id, fk_org_id, fk_dept_id, fk_med_id, quantity, datetime) VALUES (?, ?, ?, ?, ?, NOW())";
+
+            try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+                stmt.setInt(1, customerObj.getUserId());
+                stmt.setInt(2, orgId);
+                stmt.setInt(3, deptId);
+
+                // Get medicine ID from database
+                int medicineId = getMedicineIdByName(medicine.getName(), conn);
+                if (medicineId == -1) {
+                    conn.close();
+                    return;
+                }
+
+                stmt.setInt(4, medicineId);
+                stmt.setInt(5, 1); // Default quantity of 1
+
+                int rowsAffected = stmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    // Update orders count label immediately
+                    updateOrdersCount();
+                }
+            }
+
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private int getOrCreateDefaultOrganization(Connection conn) throws SQLException {
+        // Check if default organization exists
+        String checkQuery = "SELECT org_id FROM Organization WHERE name = 'Default Medical Shop'";
+        try (PreparedStatement stmt = conn.prepareStatement(checkQuery);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("org_id");
+            }
+        }
+
+        // Create default organization if it doesn't exist
+        String insertQuery = "INSERT INTO Organization (name, address, gmail) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Default Medical Shop");
+            stmt.setString(2, "Default Address");
+            stmt.setString(3, "default@medicalshop.com");
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        }
+
+        throw new SQLException("Failed to create or retrieve default organization");
+    }
+
+    private int getOrCreateDefaultDepartment(Connection conn, int orgId) throws SQLException {
+        // Check if default department exists for this organization
+        String checkQuery = "SELECT dept_id FROM Department WHERE name = 'Default Department' AND fk_org_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+            stmt.setInt(1, orgId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("dept_id");
+                }
+            }
+        }
+
+        // Get default admin for the organization
+        int adminId = getOrCreateDefaultAdmin(conn, orgId);
+
+        // Create default department if it doesn't exist
+        String insertQuery = "INSERT INTO Department (name, dept_cost, budget, fk_org_id, fk_admin_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Default Department");
+            stmt.setInt(2, 0); // Default cost
+            stmt.setInt(3, 10000); // Default budget
+            stmt.setInt(4, orgId);
+            stmt.setInt(5, adminId);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        }
+
+        throw new SQLException("Failed to create or retrieve default department");
+    }
+
+    private int getOrCreateDefaultAdmin(Connection conn, int orgId) throws SQLException {
+        // Check if default admin exists for this organization
+        String checkQuery = "SELECT admin_id FROM Admin WHERE name = 'Default Admin' AND org_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
+            stmt.setInt(1, orgId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("admin_id");
+                }
+            }
+        }
+
+        // Create default admin if it doesn't exist
+        String insertQuery = "INSERT INTO Admin (name, gmail, contact, pwd, org_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, "Default Admin");
+            stmt.setString(2, "defaultadmin@medicalshop.com");
+            stmt.setString(3, "0000000000");
+            stmt.setString(4, SystemController.encryptPassword("defaultpassword"));
+            stmt.setInt(5, orgId);
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);
+                    }
+                }
+            }
+        }
+
+        throw new SQLException("Failed to create or retrieve default admin");
+    }
+
+    private int getMedicineIdByName(String medicineName, Connection conn) {
+        try {
+            String query = "SELECT med_id FROM Medicine WHERE med_name = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, medicineName);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("med_id");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if medicine not found
+    }
+
+    private void updateOrdersCount() {
+        try {
+            Connection conn = SystemController.getConnection();
+            String ordersQuery = "SELECT COUNT(*) AS total_orders FROM Customer_buy_history WHERE fk_customer_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(ordersQuery)) {
+                stmt.setInt(1, customerObj.getUserId());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        int orderCount = rs.getInt("total_orders");
+                        ordersCountLabel.setText(String.valueOf(orderCount));
+                    }
+                }
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleAddToCart(Medicine medicine) {
+        // TODO: Implement actual cart logic here
+        // This could involve adding to cart table/session, updating cart count, etc.
+
+        // Update cart count label (placeholder logic)
+        try {
+            int currentCount = Integer.parseInt(cartCountLabel.getText());
+            cartCountLabel.setText(String.valueOf(currentCount + 1));
+        } catch (NumberFormatException e) {
+            cartCountLabel.setText("1");
+        }
+    }
+
+    @FXML
+    private void orderMedicine() {
+        try {
+            List<String> orders = customerObj.viewOrders();
+            if (orders.isEmpty()) {
+                updateContentArea("My Orders", "You have not placed any orders yet.\n\n" +
+                        "Start browsing medicines to place your first order!");
+            } else {
+                loadOrdersDisplay(orders);
+            }
+        } catch (Exception e) {
+            updateContentArea("Error", "Failed to fetch orders: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loadOrdersDisplay(List<String> orders) {
+        contentArea.getChildren().clear();
+
+        // Title
+        Label titleLabel = new Label("My Orders");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        // Orders count subtitle
+        Label countLabel = new Label("Total Orders: " + orders.size());
+        countLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5bc0be; -fx-padding: 0 0 15 0;");
+        contentArea.getChildren().add(countLabel);
+
+        // Orders container
+        VBox ordersContainer = new VBox(20);
+        ordersContainer.setPadding(new Insets(20));
+
+        for (String order : orders) {
+            VBox orderBox = createOrderBox(order);
+            ordersContainer.getChildren().add(orderBox);
+        }
+
+        contentArea.getChildren().add(ordersContainer);
+    }
+
+    private VBox createOrderBox(String orderDetails) {
+        VBox orderBox = new VBox(10);
+        orderBox.setStyle("-fx-background-color: #ffffff; -fx-padding: 20; -fx-background-radius: 15; " +
+                         "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3); " +
+                         "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
+        orderBox.setPrefWidth(800);
+
+        Label orderLabel = new Label(orderDetails);
+        orderLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #2c3e50; -fx-font-family: 'Courier New', monospace;");
+        orderLabel.setWrapText(true);
+
+        orderBox.getChildren().add(orderLabel);
+        return orderBox;
+    }
+
+    @FXML
+    private void logout() {
+        try {
+            // Load the login page (hello-view.fxml)
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/hello-view.fxml"));
+            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) contentArea.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void quickSearch() {
+        String searchTerm = quickSearchField.getText();
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            try {
+                List<Medicine> foundMedicines = customerObj.searchMedicineWithPrice(searchTerm.trim());
+                if (!foundMedicines.isEmpty()) {
+                    loadSearchResults(foundMedicines, searchTerm.trim());
+                } else {
+                    updateContentArea("Search Results",
+                            "No medicines found matching: \"" + searchTerm.trim() + "\"\n\n" +
+                            "• Try searching with different keywords\n" +
+                            "• Check spelling of medicine name\n" +
+                            "• Try searching by medicine type (e.g., Diabetes, Antibiotic)\n" +
+                            "• Try searching by company name\n\n" +
+                            "Use the 'Browse Medicines' option to see all available medicines.");
+                }
+            } catch (Exception e) {
+                updateContentArea("Search Error", "Failed to search for medicines: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            updateContentArea("Quick Search",
+                "Please enter a search term to find medicines.\n\n" +
+                "You can search by:\n" +
+                "• Medicine name (e.g., Metformin, Insulin)\n" +
+                "• Medicine type (e.g., Diabetes, Antibiotic)\n" +
+                "• Company name (e.g., PharmaLife, MediCare)\n\n" +
+                "The search will show all matching medicines from different companies.");
+        }
+    }
+
+    private void loadSearchResults(List<Medicine> medicines, String searchTerm) {
+        contentArea.getChildren().clear();
+
+        // Title with search term
+        Label titleLabel = new Label("Search Results for: \"" + searchTerm + "\"");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 10 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        // Results count subtitle
+        Label countLabel = new Label("Found " + medicines.size() + " medicine(s) matching your search");
+        countLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5bc0be; -fx-padding: 0 0 20 0;");
+        contentArea.getChildren().add(countLabel);
+
+        // Medicine boxes container
+        VBox medicineContainer = new VBox(15);
+        medicineContainer.setPadding(new Insets(20));
+
+        for (Medicine medicine : medicines) {
+            HBox medicineBox = createMedicineBox(medicine);
+            medicineContainer.getChildren().add(medicineBox);
+        }
+
+        contentArea.getChildren().add(medicineContainer);
+
+        // Clear search field after successful search
+        quickSearchField.clear();
+    }
+
+    private void updateContentArea(String title, String message) {
+        contentArea.getChildren().clear();
+
         Label titleLabel = new Label(title);
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;");
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #3a506b;");
 
-        Label descLabel = new Label(description);
-        descLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #666;");
+        Label messageLabel = new Label(message);
+        messageLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #5bc0be;");
+        messageLabel.setWrapText(true);
 
-        contentArea.getChildren().addAll(titleLabel, descLabel);
+        contentArea.getChildren().addAll(titleLabel, messageLabel);
+    }
+
+    @FXML
+    private void medicalShop() {
+        try {
+            List<MedicalShop> medicalShops = customerObj.viewMedicalShopsWithDetails();
+            if (medicalShops.isEmpty()) {
+                updateContentArea("Medical Shops", "No medical shops found.");
+            } else {
+                loadMedicalShopBoxes(medicalShops);
+            }
+        } catch (Exception e) {
+            updateContentArea("Error", "Failed to fetch medical shops: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMedicalShopBoxes(List<MedicalShop> medicalShops) {
+        contentArea.getChildren().clear();
+
+        // Title
+        Label titleLabel = new Label("Medical Shops");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        // Medical shops container
+        VBox shopsContainer = new VBox(15);
+        shopsContainer.setPadding(new Insets(20));
+
+        for (MedicalShop shop : medicalShops) {
+            HBox shopBox = createMedicalShopBox(shop);
+            shopsContainer.getChildren().add(shopBox);
+        }
+
+        contentArea.getChildren().add(shopsContainer);
+    }
+
+    private HBox createMedicalShopBox(MedicalShop shop) {
+        HBox shopBox = new HBox(20);
+        shopBox.setStyle("-fx-background-color: #ffffff; -fx-padding: 20; -fx-background-radius: 15; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3); " +
+                        "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
+        shopBox.setPrefWidth(800);
+
+        // Shop Info Section
+        VBox infoSection = new VBox(8);
+        infoSection.setPrefWidth(500);
+
+        Label nameLabel = new Label(shop.getName());
+        nameLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+
+        Label ownerLabel = new Label("Owner: " + shop.getOwner());
+        ownerLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #34495e; -fx-font-weight: bold;");
+
+        Label addressLabel = new Label("📍 Address: " + shop.getAddress());
+        addressLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
+        addressLabel.setWrapText(true);
+
+        Label emailLabel = new Label("📧 Email: " + shop.getEmail());
+        emailLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #3498db; -fx-underline: true;");
+
+        infoSection.getChildren().addAll(nameLabel, ownerLabel, addressLabel, emailLabel);
+
+        // Action Buttons Section
+        VBox buttonSection = new VBox(10);
+        buttonSection.setPrefWidth(200);
+
+        Button contactButton = new Button("Contact Shop");
+        contactButton.setStyle("-fx-background-color: linear-gradient(to right, #3a506b, #5bc0be); " +
+                              "-fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; " +
+                              "-fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 180; -fx-pref-height: 35; " +
+                              "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0, 0, 2);");
+        contactButton.setOnAction(e -> handleContactShop(shop));
+
+        Button viewInventoryButton = new Button("View Inventory");
+        viewInventoryButton.setStyle("-fx-background-color: #ffffff; -fx-text-fill: #3a506b; " +
+                                   "-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; " +
+                                   "-fx-border-color: #3a506b; -fx-border-radius: 8; -fx-border-width: 2; " +
+                                   "-fx-cursor: hand; -fx-pref-width: 180; -fx-pref-height: 35; " +
+                                   "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 2);");
+        viewInventoryButton.setOnAction(e -> handleViewInventory(shop));
+
+        buttonSection.getChildren().addAll(contactButton, viewInventoryButton);
+
+        shopBox.getChildren().addAll(infoSection, buttonSection);
+        return shopBox;
+    }
+
+    private void handleContactShop(MedicalShop shop) {
+        // Direct action - no popup, could open email client or navigate to contact form
+        // For now, just perform silent action
+    }
+
+    private void handleViewInventory(MedicalShop shop) {
+        // Direct action - navigate to inventory view
+        // TODO: Implement actual inventory viewing logic
+        // This could navigate to a detailed inventory view for the specific shop
+        viewMedicine(); // For now, show general medicine view
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialization logic if needed
     }
 }
