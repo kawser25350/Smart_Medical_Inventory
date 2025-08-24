@@ -2,7 +2,7 @@ package com.example.smartmedicalinventory.model;
 
 public class User {
     private int userId;
-    private String name;
+    protected String name;
 
     public User(int userId, String name) {
         this.userId = userId;
@@ -15,5 +15,9 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

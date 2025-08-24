@@ -70,7 +70,7 @@ public class Customer extends User {
                             rs.getString("med_name"),
                             rs.getString("med_type"),
                             rs.getString("company"),
-                            25.00 // Default price
+                            25.00
                         );
                     }
                 }
@@ -258,5 +258,42 @@ public class Customer extends User {
             }
         }
         return medicines;
+    }
+
+    public boolean updateProfile(String newName, String newContact, String newPassword) {
+        Connection conn = null;
+        try {
+            conn = SystemController.getConnection();
+            StringBuilder query = new StringBuilder("UPDATE Customer SET name = ?, contact = ?");
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                query.append(", pwd = ?");
+            }
+            query.append(" WHERE customer_id = ?");
+            try (PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+                stmt.setString(1, newName);
+                stmt.setString(2, newContact);
+                int idx = 3;
+                if (newPassword != null && !newPassword.trim().isEmpty()) {
+                    stmt.setString(idx++, SystemController.encryptPassword(newPassword));
+                }
+                stmt.setInt(idx, getUserId());
+                int rows = stmt.executeUpdate();
+                if (rows > 0) {
+                    this.name = newName;
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 }

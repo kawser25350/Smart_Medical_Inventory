@@ -90,7 +90,7 @@ public class Admin extends User {
             stmt.setInt(1, orgId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                totalSales = rs.getDouble("total_quantity") * 50.0; // Assuming average price of 50 per unit
+                totalSales = rs.getDouble("total_quantity") * 50.0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,7 +115,7 @@ public class Admin extends User {
 
     public boolean addManagerWithDefaults(String name, String email, String password, String contact) {
         try (Connection conn = SystemController.getConnection()) {
-            // Get or create default department for this organization
+
             int deptId = getOrCreateDefaultDepartment(conn);
 
             String query = "INSERT INTO Manager (name, gmail, pwd, contact, fk_dept_id, fk_org_id) VALUES (?, ?, ?, ?, ?, ?)";
@@ -125,7 +125,7 @@ public class Admin extends User {
             stmt.setString(3, SystemController.encryptPassword(password));
             stmt.setString(4, contact);
             stmt.setInt(5, deptId);
-            stmt.setInt(6, orgId); // Use the admin's organization ID
+            stmt.setInt(6, orgId);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -136,7 +136,7 @@ public class Admin extends User {
     }
 
     private int getOrCreateDefaultDepartment(Connection conn) throws SQLException {
-        // Check if default department exists for this organization
+
         String checkQuery = "SELECT dept_id FROM Department WHERE name = 'Default Department' AND fk_org_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
             stmt.setInt(1, orgId);
@@ -147,14 +147,14 @@ public class Admin extends User {
             }
         }
 
-        // Create default department if it doesn't exist
+
         String insertQuery = "INSERT INTO Department (name, dept_cost, budget, fk_org_id, fk_admin_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Default Department");
             stmt.setInt(2, 0);
             stmt.setInt(3, 100000);
             stmt.setInt(4, orgId);
-            stmt.setInt(5, getUserId()); // Use the admin's ID
+            stmt.setInt(5, getUserId());
 
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -195,17 +195,52 @@ public class Admin extends User {
         }
     }
 
+
     public List<String> viewSellHistory() {
         List<String> sellHistory = new ArrayList<>();
         try (Connection conn = SystemController.getConnection()) {
-            String query = "SELECT fk_med_id, quantity, datetime FROM Customer_buy_history WHERE fk_org_id = ?";
+            String query = "SELECT cbh.quantity, cbh.datetime, m.med_name, m.med_type, m.company, cbh.fk_customer_id, c.name as customer_name, " +
+                           "CASE " +
+                           "WHEN m.med_type = 'Diabetes' THEN 45.50 " +
+                           "WHEN m.med_type = 'Antibiotic' THEN 32.75 " +
+                           "WHEN m.med_type = 'Gastric' THEN 28.25 " +
+                           "WHEN m.med_type = 'Allergy' THEN 18.90 " +
+                           "WHEN m.med_type = 'Injection' THEN 125.00 " +
+                           "ELSE 25.00 " +
+                           "END as price " +
+                           "FROM Customer_buy_history cbh " +
+                           "JOIN Medicine m ON cbh.fk_med_id = m.med_id " +
+                           "JOIN Customer c ON cbh.fk_customer_id = c.customer_id " +
+                           "WHERE cbh.fk_org_id = ? " +
+                           "ORDER BY cbh.datetime DESC";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, orgId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                sellHistory.add("Medicine ID: " + rs.getInt("fk_med_id") +
-                        ", Quantity: " + rs.getInt("quantity") +
-                        ", Date: " + rs.getTimestamp("datetime"));
+                String medicineName = rs.getString("med_name");
+                String medicineType = rs.getString("med_type");
+                String company = rs.getString("company");
+                int quantity = rs.getInt("quantity");
+                double price = rs.getDouble("price");
+                String datetime = rs.getTimestamp("datetime").toString();
+                String customerName = rs.getString("customer_name");
+
+                String sellDetails = String.format(
+                    "🏥 MEDICINE: %s\n" +
+                    "📋 Type: %s | Company: %s\n" +
+                    "📦 Quantity: %d units\n" +
+                    "💰 Unit Price: ৳%.2f | Total: ৳%.2f\n" +
+                    "🧑‍💼 Customer: %s\n" +
+                    "📅 Sell Date: %s\n" +
+                    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                    medicineName,
+                    medicineType, company,
+                    quantity,
+                    price, (price * quantity),
+                    customerName,
+                    datetime
+                );
+                sellHistory.add(sellDetails);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -328,8 +363,8 @@ public class Admin extends User {
     public List<String> viewBuyHistory(Connection conn) {
         List<String> history = new ArrayList<>();
         try {
-            // Only show purchase history for this admin's organization
-            String query = "SELECT obh.fk_med_id, m.med_name, obh.quantity, obh.buy_date " +
+
+            String query = "SELECT obh.fk_med_id, m.med_name, m.med_type, m.company, obh.quantity, obh.buy_date " +
                           "FROM Organization_buy_history obh " +
                           "JOIN Medicine m ON obh.fk_med_id = m.med_id " +
                           "WHERE obh.fk_org_id = ? " +
@@ -338,9 +373,24 @@ public class Admin extends User {
                 stmt.setInt(1, orgId);
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
-                        history.add("Medicine: " + rs.getString("med_name") +
-                                ", Quantity: " + rs.getDouble("quantity") +
-                                ", Purchase Date: " + rs.getTimestamp("buy_date"));
+                        String medicineName = rs.getString("med_name");
+                        String medicineType = rs.getString("med_type");
+                        String company = rs.getString("company");
+                        double quantity = rs.getDouble("quantity");
+                        String buyDate = rs.getTimestamp("buy_date").toString();
+
+                        String record = String.format(
+                            "🏥 MEDICINE: %s\n" +
+                            "📋 Type: %s | Company: %s\n" +
+                            "📦 Quantity: %.0f units\n" +
+                            "📅 Purchase Date: %s\n" +
+                            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                            medicineName,
+                            medicineType, company,
+                            quantity,
+                            buyDate
+                        );
+                        history.add(record);
                     }
                 }
             }
@@ -353,7 +403,7 @@ public class Admin extends User {
     public List<String> viewSalesReport(Connection conn) {
         List<String> sales = new ArrayList<>();
         try {
-            // Only show sales for this admin's organization
+
             String query = "SELECT cbh.fk_med_id, m.med_name, cbh.quantity, cbh.datetime, c.name as customer_name " +
                           "FROM Customer_buy_history cbh " +
                           "JOIN Medicine m ON cbh.fk_med_id = m.med_id " +
@@ -380,7 +430,7 @@ public class Admin extends User {
     public List<String> medicineOversight(Connection conn) {
         List<String> medicines = new ArrayList<>();
         try {
-            // Only show medicines in this admin's organization inventory
+
             String query = "SELECT DISTINCT m.med_name, m.med_type, m.company, i.quantity " +
                           "FROM Medicine m " +
                           "JOIN Inventory i ON m.med_id = i.fk_med_id " +
@@ -404,7 +454,7 @@ public class Admin extends User {
     }
 
     public List<String> systemLogs() {
-        // System logs specific to this organization
+
         List<String> logs = new ArrayList<>();
         logs.add("Organization ID " + orgId + " - System started successfully");
         logs.add("Organization ID " + orgId + " - Database connection established");
@@ -418,7 +468,7 @@ public class Admin extends User {
         return logs;
     }
 
-    // Get organization-specific statistics
+
     public int getOrganizationCustomersCount() {
         try (Connection conn = SystemController.getConnection()) {
             String query = "SELECT COUNT(DISTINCT fk_customer_id) as count FROM Customer_buy_history WHERE fk_org_id = ?";
@@ -445,7 +495,7 @@ public class Admin extends User {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 double totalSold = rs.getDouble("total_sold");
-                revenue = totalSold * 45.0; // Average price calculation
+                revenue = totalSold * 45.0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -479,7 +529,6 @@ public class Admin extends User {
     public List<Medicine> getMedicineInventoryWithDetails() {
         List<Medicine> medicines = new ArrayList<>();
         try (Connection conn = SystemController.getConnection()) {
-            // Modified query to show only medicines from this admin's organization
             String query = "SELECT m.med_id, m.med_name, m.med_type, m.company, " +
                           "COALESCE(i.quantity, 0) as quantity " +
                           "FROM Medicine m " +
@@ -491,7 +540,6 @@ public class Admin extends User {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                // Calculate price based on medicine type (since no price column exists in inventory)
                 double price = calculatePriceByType(rs.getString("med_type"));
 
                 Medicine medicine = new Medicine(
@@ -504,7 +552,7 @@ public class Admin extends User {
 
                 medicine.setQuantity(rs.getDouble("quantity"));
 
-                // Set a default expiry date (1 year from now)
+
                 java.util.Calendar cal = java.util.Calendar.getInstance();
                 cal.add(java.util.Calendar.YEAR, 1);
                 medicine.setExpiryDate(cal.getTime());
@@ -541,7 +589,7 @@ public class Admin extends User {
         try (Connection conn = SystemController.getConnection()) {
             conn.setAutoCommit(false);
 
-            // Update Medicine table
+
             String medicineQuery = "UPDATE Medicine SET med_name = ?, med_type = ?, company = ? WHERE med_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(medicineQuery)) {
                 stmt.setString(1, name);
@@ -551,7 +599,7 @@ public class Admin extends User {
                 stmt.executeUpdate();
             }
 
-            // Update or Insert Inventory (without price_per_unit and expiry_date columns)
+
             String checkInventoryQuery = "SELECT COUNT(*) FROM Inventory WHERE fk_med_id = ? AND fk_org_id = ?";
             boolean inventoryExists = false;
 
@@ -565,7 +613,7 @@ public class Admin extends User {
             }
 
             if (inventoryExists) {
-                // Update existing inventory record
+
                 String updateQuery = "UPDATE Inventory SET med_type = ?, quantity = ? WHERE fk_med_id = ? AND fk_org_id = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
                     stmt.setString(1, type);
@@ -575,7 +623,7 @@ public class Admin extends User {
                     stmt.executeUpdate();
                 }
             } else {
-                // Insert new inventory record
+
                 String insertQuery = "INSERT INTO Inventory (fk_org_id, fk_dept_id, fk_med_id, med_type, quantity, location) " +
                                    "VALUES (?, ?, ?, ?, ?, 'Main Warehouse')";
                 try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
@@ -601,7 +649,7 @@ public class Admin extends User {
 
     public boolean deleteMedicineFromInventory(int medicineId) {
         try (Connection conn = SystemController.getConnection()) {
-            // First delete from inventory
+
             String inventoryQuery = "DELETE FROM Inventory WHERE fk_med_id = ? AND fk_org_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(inventoryQuery)) {
                 stmt.setInt(1, medicineId);
@@ -609,13 +657,13 @@ public class Admin extends User {
                 stmt.executeUpdate();
             }
 
-            // Then check if medicine is used in other organizations, if not delete from Medicine table
+
             String checkQuery = "SELECT COUNT(*) as count FROM Inventory WHERE fk_med_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
                 stmt.setInt(1, medicineId);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next() && rs.getInt("count") == 0) {
-                    // Delete from Medicine table if not used anywhere else
+
                     String medicineQuery = "DELETE FROM Medicine WHERE med_id = ?";
                     try (PreparedStatement deleteStmt = conn.prepareStatement(medicineQuery)) {
                         deleteStmt.setInt(1, medicineId);
@@ -646,26 +694,77 @@ public class Admin extends User {
     }
 
     public void updateSettings(String key, String value) {
-        // This method can be used to update admin-specific settings
-        // For now, it's a placeholder that could be extended to update database settings
-        // or maintain session-specific configurations
+
         System.out.println("Admin setting updated: " + key + " = " + value);
 
-        // In the future, this could update a settings table or configuration file
-        // Example implementation could be:
-        /*
+    }
+
+
+    public boolean updateAdminName(String newName) {
         try (Connection conn = SystemController.getConnection()) {
-            String query = "INSERT INTO Admin_Settings (admin_id, setting_key, setting_value, updated_at) " +
-                          "VALUES (?, ?, ?, NOW()) " +
-                          "ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()";
+            String query = "UPDATE Admin SET name = ? WHERE admin_id = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, getUserId());
-            stmt.setString(2, key);
-            stmt.setString(3, value);
-            stmt.executeUpdate();
+            stmt.setString(1, newName);
+            stmt.setInt(2, getAdminId());
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                super.name = newName;
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        */
+        return false;
+    }
+
+
+    public boolean updateOrganizationName(String newOrgName) {
+        try (Connection conn = SystemController.getConnection()) {
+            String query = "UPDATE Organization SET name = ? WHERE org_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, newOrgName);
+            stmt.setInt(2, getOrgId());
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public List<String> getMedicinePurchasePredictions() {
+        List<String> predictions = new ArrayList<>();
+        try (Connection conn = SystemController.getConnection()) {
+            String query = "SELECT sr.fk_med_id, m.med_name, m.med_type, " +
+                           "sr.month_1, sr.month_2, sr.month_3, sr.month_4, sr.month_5, sr.month_6 " +
+                           "FROM sell_record sr " +
+                           "JOIN Medicine m ON sr.fk_med_id = m.med_id " +
+                           "WHERE sr.fk_org_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, orgId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String medName = rs.getString("med_name");
+                String medType = rs.getString("med_type");
+                double[] months = new double[6];
+                months[0] = rs.getDouble("month_1");
+                months[1] = rs.getDouble("month_2");
+                months[2] = rs.getDouble("month_3");
+                months[3] = rs.getDouble("month_4");
+                months[4] = rs.getDouble("month_5");
+                months[5] = rs.getDouble("month_6");
+                double mean = 0;
+                for (double m : months) mean += m;
+                mean /= 6.0;
+                predictions.add(String.format(
+                    "Medicine: %s (%s)\nPrevious 6 months: [%.0f, %.0f, %.0f, %.0f, %.0f, %.0f]\nPredicted required quantity for next month: %.0f units",
+                    medName, medType, months[0], months[1], months[2], months[3], months[4], months[5], mean
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return predictions;
     }
 }

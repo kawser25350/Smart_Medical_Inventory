@@ -91,7 +91,7 @@ public class HelloController {
                         }
                     }
                 }
-            } else if ("Organization".equalsIgnoreCase(userType)) {
+            } else if ("Organization".equalsIgnoreCase(userType) || "Admin".equalsIgnoreCase(userType)) {
                 // Try Admin login
                 String sql = "SELECT * FROM Admin WHERE gmail = ?";
                 try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -104,9 +104,8 @@ public class HelloController {
                                 Admin adminObj = new Admin(
                                         rs.getInt("admin_id"),
                                         rs.getString("name"),
-                                        rs.getInt("org_id") // Adjusted constructor arguments
+                                        rs.getInt("org_id")
                                 );
-                                // create admin obj and pass it to admin dashbord controller
                                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/admin_dashbord.fxml"));
                                 Parent root = fxmlLoader.load();
                                 Admin_dashbordcontroller controller = fxmlLoader.getController();
@@ -119,7 +118,7 @@ public class HelloController {
                         }
                     }
                 }
-                // If not admin, try Manager login
+
                 if (!loginSuccess) {
                     sql = "SELECT manager_id, name, pwd, fk_dept_id, fk_org_id FROM Manager WHERE gmail = ?";
                     try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -127,19 +126,21 @@ public class HelloController {
                         try (ResultSet rs = ps.executeQuery()) {
                             if (rs.next()) {
                                 String dbPwd = rs.getString("pwd");
-                                if (SystemController.decryptPassword(dbPwd).equals(password)) {
-                                    loginSuccess = true;
 
-                                    // Fetch manager details
+                                String inputPwd = password;
+                                String dbPwdDecrypted;
+                                try {
+                                    dbPwdDecrypted = SystemController.decryptPassword(dbPwd);
+                                } catch (Exception ex) {
+                                    dbPwdDecrypted = dbPwd;
+                                }
+                                if (dbPwdDecrypted.equals(inputPwd)) {
+                                    loginSuccess = true;
                                     int managerId = rs.getInt("manager_id");
                                     String managerName = rs.getString("name");
                                     int deptId = rs.getInt("fk_dept_id");
                                     int orgId = rs.getInt("fk_org_id");
-
-                                    // Create Manager object
                                     Manager managerObj = new Manager(managerId, managerName, deptId, orgId);
-
-                                    // Load Manager Dashboard
                                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/manager_dashbord.fxml"));
                                     Parent root = fxmlLoader.load();
                                     Manager_dashbordcontroller controller = fxmlLoader.getController();

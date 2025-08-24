@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -41,23 +42,28 @@ public class Customer_dashbordcontroller implements Initializable {
     private Label profileNameLabel;
 
     @FXML
-    private Label userNameLabel; // Add this label mapping
+    private Label userNameLabel;
 
     @FXML
-    private Label customerIdLabel; // Add this label mapping
+    private Label customerIdLabel;
 
     @FXML
-    private VBox contentArea; // Ensure this matches the FXML file's fx:id
+    private VBox contentArea;
 
     @FXML
     private TextField quickSearchField;
 
+    @FXML
+    private TextField orderSearchField;
+
     private Customer customerObj;
+
+    private List<Medicine> cart = new ArrayList<>();
 
     public void setCustomer(Customer customer) {
         this.customerObj = customer;
 
-        // Set user information in all relevant labels - add null checks
+
         if (userNameLabel != null) {
             userNameLabel.setText(customer.getName());
         }
@@ -76,7 +82,7 @@ public class Customer_dashbordcontroller implements Initializable {
         try {
             conn = SystemController.getConnection();
 
-            // Fetch total available medicines
+
             String medicineQuery = "SELECT COUNT(*) AS total_medicines FROM Medicine";
             try (PreparedStatement stmt = conn.prepareStatement(medicineQuery);
                  ResultSet rs = stmt.executeQuery()) {
@@ -85,7 +91,7 @@ public class Customer_dashbordcontroller implements Initializable {
                 }
             }
 
-            // Fetch total orders for the customer
+
             String ordersQuery = "SELECT COUNT(*) AS total_orders FROM Customer_buy_history WHERE fk_customer_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(ordersQuery)) {
                 stmt.setInt(1, customerObj.getUserId());
@@ -96,12 +102,12 @@ public class Customer_dashbordcontroller implements Initializable {
                 }
             }
 
-            // Set cart count to 0 for now (can be enhanced later)
-            cartCountLabel.setText("0");
+
+            cartCountLabel.setText(String.valueOf(cart.size()));
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Set default values on error
+
             medicineCountLabel.setText("0");
             ordersCountLabel.setText("0");
             cartCountLabel.setText("0");
@@ -118,18 +124,16 @@ public class Customer_dashbordcontroller implements Initializable {
 
     @FXML
     private void profileMenu() {
-        loadEditProfileForm(); // Only settings functionality available
+        loadEditProfileForm();
     }
 
     private void loadEditProfileForm() {
         contentArea.getChildren().clear();
 
-        // Title
         Label titleLabel = new Label("Settings");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 30 0;");
         contentArea.getChildren().add(titleLabel);
 
-        // Edit Profile Form
         VBox formContainer = new VBox(20);
         formContainer.setPadding(new Insets(20));
         formContainer.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 15; " +
@@ -137,7 +141,6 @@ public class Customer_dashbordcontroller implements Initializable {
                               "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
         formContainer.setPrefWidth(700);
 
-        // Name Field
         VBox nameSection = new VBox(8);
         Label nameLabel = new Label("Full Name");
         nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
@@ -147,12 +150,11 @@ public class Customer_dashbordcontroller implements Initializable {
         nameField.setPrefHeight(40);
         nameSection.getChildren().addAll(nameLabel, nameField);
 
-        // Email Field (Read-only with note)
         VBox emailSection = new VBox(8);
         Label emailLabel = new Label("Email Address");
         emailLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
         TextField emailField = new TextField();
-        emailField.setText("customer@example.com"); // This should come from database
+        emailField.setText("customer@example.com");
         emailField.setEditable(false);
         emailField.setStyle("-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #95a5a6; -fx-border-radius: 8; -fx-background-color: #ecf0f1;");
         emailField.setPrefHeight(40);
@@ -162,7 +164,6 @@ public class Customer_dashbordcontroller implements Initializable {
 
         emailSection.getChildren().addAll(emailLabel, emailField, emailNote);
 
-        // Contact Field
         VBox contactSection = new VBox(8);
         Label contactLabel = new Label("Contact Number");
         contactLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
@@ -172,7 +173,6 @@ public class Customer_dashbordcontroller implements Initializable {
         contactField.setPrefHeight(40);
         contactSection.getChildren().addAll(contactLabel, contactField);
 
-        // Password Section
         VBox passwordSection = new VBox(8);
         Label passwordLabel = new Label("New Password (Optional)");
         passwordLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
@@ -182,7 +182,6 @@ public class Customer_dashbordcontroller implements Initializable {
         passwordField.setPrefHeight(40);
         passwordSection.getChildren().addAll(passwordLabel, passwordField);
 
-        // Buttons
         HBox buttonSection = new HBox(15);
         buttonSection.setStyle("-fx-alignment: center;");
 
@@ -192,7 +191,23 @@ public class Customer_dashbordcontroller implements Initializable {
                            "-fx-background-radius: 8; -fx-cursor: hand; -fx-pref-width: 150; -fx-pref-height: 40; " +
                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0, 0, 2);");
         saveButton.setOnAction(e -> {
-            // TODO: Implement save functionality - no popup
+            String newName = nameField.getText().trim();
+            String newContact = contactField.getText().trim();
+            String newPassword = passwordField.getText().trim();
+
+            if (newName.isEmpty() || newContact.isEmpty()) {
+                updateContentArea("Validation Error", "Name and contact number are required.");
+                return;
+            }
+
+            boolean updated = customerObj.updateProfile(newName, newContact, newPassword);
+            if (updated) {
+                profileNameLabel.setText(newName);
+                userNameLabel.setText(newName);
+                updateContentArea("Success", "Profile updated successfully.");
+            } else {
+                updateContentArea("Error", "Failed to update profile. Please try again.");
+            }
         });
 
         Button cancelButton = new Button("Cancel");
@@ -229,12 +244,12 @@ public class Customer_dashbordcontroller implements Initializable {
     private void loadMedicineBoxes(List<Medicine> medicines) {
         contentArea.getChildren().clear();
 
-        // Title
+
         Label titleLabel = new Label("Browse Medicines");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
         contentArea.getChildren().add(titleLabel);
 
-        // Medicine boxes container
+
         VBox medicineContainer = new VBox(15);
         medicineContainer.setPadding(new Insets(20));
 
@@ -253,7 +268,7 @@ public class Customer_dashbordcontroller implements Initializable {
                            "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
         medicineBox.setPrefWidth(800);
 
-        // Medicine Info Section
+
         VBox infoSection = new VBox(8);
         infoSection.setPrefWidth(400);
 
@@ -266,12 +281,12 @@ public class Customer_dashbordcontroller implements Initializable {
         Label companyLabel = new Label("Company: " + medicine.getCompany());
         companyLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
-        Label priceLabel = new Label("Price: $" + String.format("%.2f", medicine.getPricePerUnit()) + " per unit");
+        Label priceLabel = new Label("Price: ৳" + String.format("%.2f", medicine.getPricePerUnit()) + " per unit");
         priceLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;");
 
         infoSection.getChildren().addAll(nameLabel, typeLabel, companyLabel, priceLabel);
 
-        // Buttons Section
+
         VBox buttonSection = new VBox(10);
         buttonSection.setPrefWidth(200);
 
@@ -298,10 +313,10 @@ public class Customer_dashbordcontroller implements Initializable {
 
     private void handleOrderMedicine(Medicine medicine) {
         try {
-            // Insert order into database
+
             Connection conn = SystemController.getConnection();
 
-            // First, ensure we have a default organization and department
+
             int orgId = getOrCreateDefaultOrganization(conn);
             int deptId = getOrCreateDefaultDepartment(conn, orgId);
 
@@ -312,7 +327,7 @@ public class Customer_dashbordcontroller implements Initializable {
                 stmt.setInt(2, orgId);
                 stmt.setInt(3, deptId);
 
-                // Get medicine ID from database
+
                 int medicineId = getMedicineIdByName(medicine.getName(), conn);
                 if (medicineId == -1) {
                     conn.close();
@@ -320,12 +335,12 @@ public class Customer_dashbordcontroller implements Initializable {
                 }
 
                 stmt.setInt(4, medicineId);
-                stmt.setInt(5, 1); // Default quantity of 1
+                stmt.setInt(5, 1);
 
                 int rowsAffected = stmt.executeUpdate();
 
                 if (rowsAffected > 0) {
-                    // Update orders count label immediately
+
                     updateOrdersCount();
                 }
             }
@@ -338,7 +353,7 @@ public class Customer_dashbordcontroller implements Initializable {
     }
 
     private int getOrCreateDefaultOrganization(Connection conn) throws SQLException {
-        // Check if default organization exists
+
         String checkQuery = "SELECT org_id FROM Organization WHERE name = 'Default Medical Shop'";
         try (PreparedStatement stmt = conn.prepareStatement(checkQuery);
              ResultSet rs = stmt.executeQuery()) {
@@ -347,7 +362,7 @@ public class Customer_dashbordcontroller implements Initializable {
             }
         }
 
-        // Create default organization if it doesn't exist
+
         String insertQuery = "INSERT INTO Organization (name, address, gmail) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Default Medical Shop");
@@ -368,7 +383,7 @@ public class Customer_dashbordcontroller implements Initializable {
     }
 
     private int getOrCreateDefaultDepartment(Connection conn, int orgId) throws SQLException {
-        // Check if default department exists for this organization
+
         String checkQuery = "SELECT dept_id FROM Department WHERE name = 'Default Department' AND fk_org_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
             stmt.setInt(1, orgId);
@@ -379,15 +394,15 @@ public class Customer_dashbordcontroller implements Initializable {
             }
         }
 
-        // Get default admin for the organization
+
         int adminId = getOrCreateDefaultAdmin(conn, orgId);
 
-        // Create default department if it doesn't exist
+
         String insertQuery = "INSERT INTO Department (name, dept_cost, budget, fk_org_id, fk_admin_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Default Department");
-            stmt.setInt(2, 0); // Default cost
-            stmt.setInt(3, 10000); // Default budget
+            stmt.setInt(2, 0);
+            stmt.setInt(3, 10000);
             stmt.setInt(4, orgId);
             stmt.setInt(5, adminId);
 
@@ -405,7 +420,7 @@ public class Customer_dashbordcontroller implements Initializable {
     }
 
     private int getOrCreateDefaultAdmin(Connection conn, int orgId) throws SQLException {
-        // Check if default admin exists for this organization
+
         String checkQuery = "SELECT admin_id FROM Admin WHERE name = 'Default Admin' AND org_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
             stmt.setInt(1, orgId);
@@ -416,7 +431,7 @@ public class Customer_dashbordcontroller implements Initializable {
             }
         }
 
-        // Create default admin if it doesn't exist
+
         String insertQuery = "INSERT INTO Admin (name, gmail, contact, pwd, org_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(insertQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, "Default Admin");
@@ -452,7 +467,7 @@ public class Customer_dashbordcontroller implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 if medicine not found
+        return -1;
     }
 
     private void updateOrdersCount() {
@@ -475,15 +490,44 @@ public class Customer_dashbordcontroller implements Initializable {
     }
 
     private void handleAddToCart(Medicine medicine) {
-        // TODO: Implement actual cart logic here
-        // This could involve adding to cart table/session, updating cart count, etc.
+        cart.add(medicine);
+        cartCountLabel.setText(String.valueOf(cart.size()));
+    }
 
-        // Update cart count label (placeholder logic)
+
+    @FXML
+    private void completeCart() {
+        if (cart.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your cart is empty.");
+            alert.showAndWait();
+            return;
+        }
         try {
-            int currentCount = Integer.parseInt(cartCountLabel.getText());
-            cartCountLabel.setText(String.valueOf(currentCount + 1));
-        } catch (NumberFormatException e) {
-            cartCountLabel.setText("1");
+            Connection conn = SystemController.getConnection();
+            int orgId = getOrCreateDefaultOrganization(conn);
+            int deptId = getOrCreateDefaultDepartment(conn, orgId);
+
+            for (Medicine medicine : cart) {
+                int medicineId = getMedicineIdByName(medicine.getName(), conn);
+                if (medicineId != -1) {
+                    String insertQuery = "INSERT INTO Customer_buy_history (fk_customer_id, fk_org_id, fk_dept_id, fk_med_id, quantity, datetime) VALUES (?, ?, ?, ?, ?, NOW())";
+                    try (PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+                        stmt.setInt(1, customerObj.getUserId());
+                        stmt.setInt(2, orgId);
+                        stmt.setInt(3, deptId);
+                        stmt.setInt(4, medicineId);
+                        stmt.setInt(5, 1);
+                        stmt.executeUpdate();
+                    }
+                }
+            }
+            cart.clear();
+            cartCountLabel.setText("0");
+            updateOrdersCount();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "All cart items have been ordered successfully!");
+            alert.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -506,25 +550,79 @@ public class Customer_dashbordcontroller implements Initializable {
     private void loadOrdersDisplay(List<String> orders) {
         contentArea.getChildren().clear();
 
-        // Title
         Label titleLabel = new Label("My Orders");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
         contentArea.getChildren().add(titleLabel);
 
-        // Orders count subtitle
         Label countLabel = new Label("Total Orders: " + orders.size());
         countLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5bc0be; -fx-padding: 0 0 15 0;");
         contentArea.getChildren().add(countLabel);
 
-        // Orders container
+        // --- Add search field for orders ---
+        HBox searchBox = new HBox(10);
+        Label searchLabel = new Label("Search by Medicine Name:");
+        searchLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #3a506b;");
+        orderSearchField = new TextField();
+        orderSearchField.setPromptText("Enter medicine name...");
+        Button searchBtn = new Button("Search");
+        searchBtn.setOnAction(e -> searchOrderByMedicineName());
+        searchBox.getChildren().addAll(searchLabel, orderSearchField, searchBtn);
+        contentArea.getChildren().add(searchBox);
+
         VBox ordersContainer = new VBox(20);
         ordersContainer.setPadding(new Insets(20));
+        ordersContainer.setId("ordersContainer");
 
         for (String order : orders) {
             VBox orderBox = createOrderBox(order);
             ordersContainer.getChildren().add(orderBox);
         }
 
+        contentArea.getChildren().add(ordersContainer);
+    }
+
+
+    private void searchOrderByMedicineName() {
+        String searchTerm = orderSearchField.getText();
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            orderMedicine();
+            return;
+        }
+        List<String> filteredOrders = new ArrayList<>();
+        List<String> allOrders = customerObj.viewOrders();
+        for (String order : allOrders) {
+            if (order.toLowerCase().contains(searchTerm.trim().toLowerCase())) {
+                filteredOrders.add(order);
+            }
+        }
+
+        contentArea.getChildren().clear();
+
+        Label titleLabel = new Label("My Orders (Filtered)");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
+        contentArea.getChildren().add(titleLabel);
+
+        Label countLabel = new Label("Found: " + filteredOrders.size());
+        countLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5bc0be; -fx-padding: 0 0 15 0;");
+        contentArea.getChildren().add(countLabel);
+
+
+        HBox searchBox = new HBox(10);
+        Label searchLabel = new Label("Search by Medicine Name:");
+        searchLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #3a506b;");
+        orderSearchField = new TextField(searchTerm);
+        orderSearchField.setPromptText("Enter medicine name...");
+        Button searchBtn = new Button("Search");
+        searchBtn.setOnAction(e -> searchOrderByMedicineName());
+        searchBox.getChildren().addAll(searchLabel, orderSearchField, searchBtn);
+        contentArea.getChildren().add(searchBox);
+
+        VBox ordersContainer = new VBox(20);
+        ordersContainer.setPadding(new Insets(20));
+        for (String order : filteredOrders) {
+            VBox orderBox = createOrderBox(order);
+            ordersContainer.getChildren().add(orderBox);
+        }
         contentArea.getChildren().add(ordersContainer);
     }
 
@@ -546,7 +644,7 @@ public class Customer_dashbordcontroller implements Initializable {
     @FXML
     private void logout() {
         try {
-            // Load the login page (hello-view.fxml)
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/smartmedicalinventory/fxml/hello-view.fxml"));
             Parent root = fxmlLoader.load();
             Scene scene = new Scene(root);
@@ -593,17 +691,17 @@ public class Customer_dashbordcontroller implements Initializable {
     private void loadSearchResults(List<Medicine> medicines, String searchTerm) {
         contentArea.getChildren().clear();
 
-        // Title with search term
+
         Label titleLabel = new Label("Search Results for: \"" + searchTerm + "\"");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 10 0;");
         contentArea.getChildren().add(titleLabel);
 
-        // Results count subtitle
+
         Label countLabel = new Label("Found " + medicines.size() + " medicine(s) matching your search");
         countLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5bc0be; -fx-padding: 0 0 20 0;");
         contentArea.getChildren().add(countLabel);
 
-        // Medicine boxes container
+
         VBox medicineContainer = new VBox(15);
         medicineContainer.setPadding(new Insets(20));
 
@@ -614,7 +712,7 @@ public class Customer_dashbordcontroller implements Initializable {
 
         contentArea.getChildren().add(medicineContainer);
 
-        // Clear search field after successful search
+
         quickSearchField.clear();
     }
 
@@ -649,12 +747,12 @@ public class Customer_dashbordcontroller implements Initializable {
     private void loadMedicalShopBoxes(List<MedicalShop> medicalShops) {
         contentArea.getChildren().clear();
 
-        // Title
+
         Label titleLabel = new Label("Medical Shops");
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #3a506b; -fx-padding: 0 0 20 0;");
         contentArea.getChildren().add(titleLabel);
 
-        // Medical shops container
+
         VBox shopsContainer = new VBox(15);
         shopsContainer.setPadding(new Insets(20));
 
@@ -673,7 +771,7 @@ public class Customer_dashbordcontroller implements Initializable {
                         "-fx-border-color: #e0e0e0; -fx-border-radius: 15; -fx-border-width: 1;");
         shopBox.setPrefWidth(800);
 
-        // Shop Info Section
+
         VBox infoSection = new VBox(8);
         infoSection.setPrefWidth(500);
 
@@ -692,7 +790,7 @@ public class Customer_dashbordcontroller implements Initializable {
 
         infoSection.getChildren().addAll(nameLabel, ownerLabel, addressLabel, emailLabel);
 
-        // Action Buttons Section
+
         VBox buttonSection = new VBox(10);
         buttonSection.setPrefWidth(200);
 
@@ -718,19 +816,16 @@ public class Customer_dashbordcontroller implements Initializable {
     }
 
     private void handleContactShop(MedicalShop shop) {
-        // Direct action - no popup, could open email client or navigate to contact form
-        // For now, just perform silent action
+
     }
 
     private void handleViewInventory(MedicalShop shop) {
-        // Direct action - navigate to inventory view
-        // TODO: Implement actual inventory viewing logic
-        // This could navigate to a detailed inventory view for the specific shop
-        viewMedicine(); // For now, show general medicine view
+
+        viewMedicine();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Initialization logic if needed
+
     }
 }

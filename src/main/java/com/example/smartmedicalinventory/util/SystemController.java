@@ -17,7 +17,7 @@ public class SystemController {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Database connected successfully.");
-            conn.close(); // Close test connection
+            conn.close();
         } catch (Exception e) {
             System.out.println("Database connection failed: " + e.getMessage());
             e.printStackTrace();
@@ -41,7 +41,7 @@ public class SystemController {
         try {
             return new String(Base64.getDecoder().decode(encryptedPassword));
         } catch (Exception e) {
-            return encryptedPassword; // Return original if decoding fails
+            return encryptedPassword;
         }
     }
 
@@ -79,9 +79,9 @@ public class SystemController {
         Connection conn = null;
         try {
             conn = getConnection();
-            conn.setAutoCommit(false); // Start transaction
+            conn.setAutoCommit(false);
 
-            // First, insert organization
+
             String orgSql = "INSERT INTO Organization (name, address, gmail) VALUES (?, ?, ?)";
             int orgId;
             try (PreparedStatement orgStmt = conn.prepareStatement(orgSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -95,7 +95,7 @@ public class SystemController {
                     return false;
                 }
 
-                // Get generated organization ID
+
                 try (ResultSet generatedKeys = orgStmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         orgId = generatedKeys.getInt(1);
@@ -106,7 +106,7 @@ public class SystemController {
                 }
             }
 
-            // Then, insert admin with the organization ID
+
             String adminSql = "INSERT INTO Admin (name, gmail, contact, pwd, org_id) VALUES (?, ?, ?, ?, ?)";
             try (PreparedStatement adminStmt = conn.prepareStatement(adminSql)) {
                 adminStmt.setString(1, adminName);
@@ -122,7 +122,7 @@ public class SystemController {
                 }
             }
 
-            conn.commit(); // Commit transaction
+            conn.commit();
             return true;
 
         } catch (SQLException e) {
@@ -139,7 +139,7 @@ public class SystemController {
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true); // Reset auto-commit
+                    conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
