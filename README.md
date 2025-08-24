@@ -87,77 +87,35 @@
 
 ---
 
-## ⚡ How to Set Up & Run the Project
 
-Follow these steps carefully to set up and run **MediStock Plus** on your local machine.
-
----
-
-### **1️⃣ Prerequisites**
+### ** Prerequisites**
 Before running the project, ensure you have the following installed:
 - **Java JDK 17 or higher** → [Download Here](https://jdk.java.net/17/)
 - **JavaFX SDK 17+** → [Download Here](https://gluonhq.com/products/javafx/)
 - **MySQL / MariaDB** (or any SQL-based DB)
 - **IntelliJ IDEA** / **Eclipse** / **NetBeans**
 
----
+### ** Screenshots**
+### **LOGIN PAGE**
+![LOGIN PAGE](screenshots/login.png)
+### **REGISTRATION PAGE**
+![REGISTRATION PAGE](screenshots/registration.png)
+### **CUSTOMER DASHBORD**
+![CUSTOMER DASHBORD](screenshots/customer.png)
+### **MANAGER DASHBORD**
+![MANAGER DASHBORD](screenshots/admin.png)
+### **MANAGER DASHBORD**
+![MANAGER DASHBORD](screenshots/manger.png)
 
-### **2️⃣ Clone the Repository**
-```bash
-git clone https://github.com/your-username/MediStockPlus.git
-cd MediStockPlus
 
-### **2️⃣ Clone the Repository**
-```bash
-git clone https://github.com/your-username/MediStockPlus.git
-cd MediStockPlus
-3️⃣ Set Up the Database
-Open MySQL or MariaDB
-
-Create a new database:
-
-sql
-CREATE DATABASE medistock_db;
-Import the provided medistock.sql file from the database/ folder.
-
-4️⃣ Configure Database Credentials
-Navigate to: src/main/resources/db_config.properties
-
-Update the database details:
-
-text
-db.url=jdbc:mysql://localhost:3306/medistock_db
-db.username=your_username
-db.password=your_password
-5️⃣ Configure JavaFX in IDE
-For IntelliJ IDEA:
-
-Go to File → Project Structure → Libraries → Add JavaFX SDK
-
-Add the lib folder from your downloaded JavaFX SDK
-
-In Run/Debug Configurations → VM Options, add:
-
-text
---module-path "path_to_javafx_sdk/lib" --add-modules javafx.controls,javafx.fxml
-6️⃣ Build & Run
-Open the project in your IDE
-
-Make sure JDK 17 and JavaFX 17 SDK are correctly configured
-
-Run the Main.java file:
-
-bash
-javac --module-path "path_to_javafx_sdk/lib" --add-modules javafx.controls,javafx.fxml Main.java
-java --module-path "path_to_javafx_sdk/lib" --add-modules javafx.controls,javafx.fxml Main
 🏆 Conclusion
 MediStock Plus combines e-commerce and smart inventory management into one secure, predictive, and user-friendly healthcare solution.
 It saves costs, reduces wastage, and makes medicine management seamless for customers, managers, and admins.
 
 📬 Contact
-📧 Kawser Ahmmed — [your_email@example.com]
-🔗 LinkedIn • GitHub
+📧 Kawser Ahmmed — [mkshuvo25350@gmail.com]
+- 🔗 LinkedIn • (https://www.linkedin.com/in/kawser-ahmmed-6a0b65267/)
 
-text
+
 
 
