@@ -8,42 +8,42 @@
 
 ---
 
-## 📌 Overview
+##  Overview
 **MediStock Plus** is a **JavaFX-based Smart Medical Inventory & E-Commerce Platform** designed to simplify **medicine management, inventory control, and online ordering** for **pharmacies, hospitals, and customers**.  
 
-💊 **Customers** can search, compare, and order medicines online.  
-🏪 **Managers** can **manage stock**, **track expiry dates**, **predict demand**, and **allocate budgets**.  
+**Customers** can search, compare, and order medicines online.  
+ **Managers** can **manage stock**, **track expiry dates**, **predict demand**, and **allocate budgets**.  
 ⚡ **Admins** control managers, configure prediction algorithms, and oversee the entire system.
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
-### 👨‍⚕️ **For Customers**
-- 🧾 Secure **account registration & login**
-- 🔍 **Medicine search** across stores
-- 🛒 **E-commerce ordering** from verified sellers
-- 📦 **Order tracking** & inventory browsing
+###  **For Customers**
+-  Secure **account registration & login**
+-  **Medicine search** across stores
+-  **E-commerce ordering** from verified sellers
+-  **Order tracking** & inventory browsing
 
-### 🏪 **For Managers**
+###  **For Managers**
 - ➕ Add / ❌ delete medicines  
-- ⏳ **Expiry alerts** for near-expiry products  
-- 📊 **Demand prediction** using past 6 months’ sales data  
-- 🧮 **Department-wise budget allocation**  
-- 🛍 **Sales management** directly from the app  
+-  **Expiry alerts** for near-expiry products  
+-  **Demand prediction** using past 6 months’ sales data  
+-  **Department-wise budget allocation**  
+-  **Sales management** directly from the app  
 
-### 🛡 **For Admins**
-- 👥 Create & delete **manager accounts**
-- ⚙ Modify the **prediction algorithm**
-- 🔧 Configure overall **system settings**
+###  **For Admins**
+-  Create & delete **manager accounts**
+-  Modify the **prediction algorithm**
+-  Configure overall **system settings**
 
 ---
 
 ## 🤖 Intelligent & Automated Features
-- **📦 Auto Stocking** — Automatically assigns storage locations for large inventories  
-- **🔔 Smart Alerts** — Expiry & low-stock reminders  
-- **📈 Demand Forecasting** — Predicts future demand to avoid shortages or overstocking  
-- **🔐 Role-Based Security** — Encrypted login & access control  
+- ** Auto Stocking** — Automatically assigns storage locations for large inventories  
+- ** Smart Alerts** — Expiry & low-stock reminders  
+- ** Demand Forecasting** — Predicts future demand to avoid shortages or overstocking  
+- ** Role-Based Security** — Encrypted login & access control  
 
 ---
 
@@ -61,7 +61,7 @@
 
 ---
 
-## 📂 Functional Modules
+##  Functional Modules
 
 | **Role**      | **Key Features** |
 |--------------|-------------------|
@@ -107,13 +107,12 @@ Before running the project, ensure you have the following installed:
 ### **MANAGER DASHBORD**
 ![MANAGER DASHBORD](screenshots/manger.png)
 
-
-🏆 Conclusion
+Conclusion
 MediStock Plus combines e-commerce and smart inventory management into one secure, predictive, and user-friendly healthcare solution.
 It saves costs, reduces wastage, and makes medicine management seamless for customers, managers, and admins.
 
-📬 Contact
-📧 Kawser Ahmmed — [mkshuvo25350@gmail.com]
+ Contact
+ Kawser Ahmmed — [mkshuvo25350@gmail.com]
 - 🔗 LinkedIn • (https://www.linkedin.com/in/kawser-ahmmed-6a0b65267/)
 
 
